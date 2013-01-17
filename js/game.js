@@ -7,23 +7,19 @@ var velocityY = 2;
 var board = new Board(boardWidth, boardHeight);
 var ball = new Ball(ballSize, velocityX, velocityY, boardWidth/2, boardHeight/2, board);
 
-var boardElement = document.createElement('div');
+var boardElement = document.createElement('canvas');
 boardElement.id = 'board';
-boardElement.style.width = boardWidth + "px";
-boardElement.style.height = boardHeight + "px";
+boardElement.width = boardWidth;
+boardElement.height = boardHeight;
 
-var ballElement = document.createElement('div');
-ballElement.id = 'ball';
-ballElement.style.width = ballSize + "px";
-ballElement.style.height = ballSize + "px";
-
-boardElement.appendChild(ballElement);
+var ctx = boardElement.getContext('2d');
 document.body.appendChild(boardElement);
 
 (function refresh() {
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.fillStyle = "rgb(255, 255, 255)";
+	ctx.fillRect(ball.getPosition().x, ball.getPosition().y, ballSize, ballSize);
 	ball.refreshPosition();
-	ballElement.style.left = ball.getPosition().x +"px";
-	ballElement.style.top = ball.getPosition().y + "px";
 	setTimeout(refresh, 1000/speed);
 })();
 
