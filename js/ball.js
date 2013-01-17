@@ -1,4 +1,4 @@
-function Ball(size, velocityX, velocityY, positionX, positionY, board) {
+function Ball(size, velocityX, velocityY, positionX, positionY) {
 	this.size = size;
 	this.velocity = {
 		x: velocityX,
@@ -8,11 +8,23 @@ function Ball(size, velocityX, velocityY, positionX, positionY, board) {
 		x: positionX,
 		y: positionY
 	};
-	this.board = board;
 }
 
-Ball.prototype.bounce = function(axis) {
-	this.velocity[axis] = -this.velocity[axis];
+Ball.prototype.setBoard = function(board) {
+	this.board = board;
+};
+
+Ball.prototype.bounce = (function() {
+	var sound = document.createElement('audio');
+	sound.src='soundfx/ping_pong_8bit_plop.ogg';
+	return function(axis) {
+		sound.play();
+		this.boostVelocity(axis, -1);
+	};
+})();
+
+Ball.prototype.boostVelocity = function(axis, factor) {
+	this.velocity[axis] *= factor;
 };
 
 Ball.prototype.refreshPosition = function() {
@@ -28,6 +40,7 @@ Ball.prototype.refreshPosition = function() {
 	if (bounceY) { this.bounce('y');}
 };
 
-Ball.prototype.getPosition = function() {
-	return this.position;
+Ball.prototype.draw = function(ctx) {
+	ctx.fillStyle = "rgb(255, 255, 255)";
+	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
 };

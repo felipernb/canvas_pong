@@ -1,11 +1,19 @@
-var speed = 100;
-var boardWidth = 800;
-var boardHeight = 400;
-var ballSize = 10;
-var velocityX = 5;
-var velocityY = 2;
+var speed = 100,
+	boardWidth = 800,
+	boardHeight = 600,
+	ballSize = 10,
+	initialVelocityX = 5,
+	initialVelocityY = 2,
+	padelSize = 100;
+
 var board = new Board(boardWidth, boardHeight);
-var ball = new Ball(ballSize, velocityX, velocityY, boardWidth/2, boardHeight/2, board);
+
+var ball = new Ball(ballSize, initialVelocityX, initialVelocityY, boardWidth/2, boardHeight/2);
+var padel1 = new Padel(padelSize, 50, boardHeight/2 - padelSize/2);
+var padel2 = new Padel(padelSize, boardWidth - 60, boardHeight/2 - padelSize/2);
+
+board.setBall(ball);
+board.setPadels(padel1, padel2);
 
 var boardElement = document.createElement('canvas');
 boardElement.id = 'board';
@@ -15,11 +23,26 @@ boardElement.height = boardHeight;
 var ctx = boardElement.getContext('2d');
 document.body.appendChild(boardElement);
 
+document.onkeypress = function(e) {
+	e = e || window.event;
+	var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+	switch (charCode) {
+		case 119:
+			padel1.moveUp();
+			padel2.moveUp();
+			break;
+		case 115:
+			padel1.moveDown();
+			padel2.moveDown();
+			break;
+	}
+};
+
+
 (function refresh() {
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	ctx.fillStyle = "rgb(255, 255, 255)";
-	ctx.fillRect(ball.getPosition().x, ball.getPosition().y, ballSize, ballSize);
-	ball.refreshPosition();
+	board.draw(ctx);
 	setTimeout(refresh, 1000/speed);
 })();
+
 
