@@ -1,4 +1,4 @@
-var speed = 100,
+var speed = 50,
 	boardWidth = 800,
 	boardHeight = 600,
 	ballSize = 10,

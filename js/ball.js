@@ -30,7 +30,13 @@ Ball.prototype.boostVelocity = function(axis, factor) {
 Ball.prototype.refreshPosition = function() {
 	var newX = this.position.x + this.velocity.x;
 	var newY = this.position.y + this.velocity.y;
-	var bounceX = (newX < 0 || newX + this.size > this.board.getWidth());
+
+	var padelCoordinates = this.board.getPadel(this.velocity.x).getPosition();
+
+	var bounceX = (padelCoordinates.y[0] < newY && padelCoordinates.y[1] >= newY + this.size) /* the ball is in the Y range of the padel */ && (
+		(this.velocity.x < 0 && padelCoordinates.x[1] == newX) ||
+		(this.velocity.x > 0 && padelCoordinates.x[0] == newX + this.size));
+
 	var bounceY = (newY < 0 || newY + this.size > this.board.getHeight());
 
 	this.position.x = (newX < 0 ? 0 : (newX + this.size > this.board.getWidth() ? this.board.getWidth() - this.size : newX));
