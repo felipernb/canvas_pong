@@ -2,7 +2,7 @@ function Padel(size, x, y) {
 	this.size = size;
 	this.x = x;
 	this.y = y;
-	this.move = 10;
+	this.move = 20;
 	this.width = 10;
 }
 

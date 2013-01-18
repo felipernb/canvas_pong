@@ -30,21 +30,14 @@ Board.prototype.setScorePanel = function(score0, score1) {
 	this.elements.score1 = score1;
 };
 
-Board.prototype.score = (function() {
-	var sound = document.createElement('audio');
-	sound.src = 'soundfx/ping_pong_8bit_peeeeeep.ogg';
-	return function(padel) {
-		sound.play();
-		var scorer = padel ^ 1;
-		if (this.elements["score" + scorer].points == 9) {
-			this.gameOver(scorer);
-		} else {
-			this.elements["score" + scorer].points++;
-			this.elements.ball.setPosition(this.width/2 - this.elements.ball.size/2, this.height/2);
-			this.elements.ball.bounce('x');
-		}
-	};
-})();
+Board.prototype.score = function(padel) {
+	var scorer = padel ^ 1;
+	if (this.elements["score" + scorer].points == 9) {
+		this.gameOver(scorer);
+	} else {
+		this.elements["score" + scorer].points++;
+	}
+};
 
 Board.prototype.gameOver = function(scorer) {
 	gameOver = true;
@@ -65,3 +58,4 @@ Board.prototype.draw = function(context) {
 		this.elements[i].draw(context);
 	}
 };
+

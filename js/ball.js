@@ -1,8 +1,12 @@
 function Ball(size, velocityX, velocityY, positionX, positionY) {
 	this.size = size;
-	this.velocity = {
+	this.initialVelocity = {
 		x: velocityX,
 		y: velocityY
+	};
+	this.velocity = {
+		x: this.initialVelocity.x,
+		y: this.initialVelocity.y
 	};
 	this.position = {
 		x: positionX,
@@ -20,17 +24,22 @@ Ball.prototype.bounce = (function() {
 
 	var plop = document.createElement('audio');
 	plop.src = 'soundfx/ping_pong_8bit_plop.ogg';
-	return function(axis) {
-		if (axis == 'y') beep.play();
-		else plop.play();
 
-		this.boostVelocity(axis, -1);
+	var peeeeeep = document.createElement('audio');
+	peeeeeep.src = 'soundfx/ping_pong_8bit_peeeeeep.ogg';
+
+	return function(axis, score) {
+		if (axis == 'y') {
+			beep.play();
+		} else if (!score) {
+			plop.play();
+		} else {
+			peeeeeep.play();
+		}
+
+		this.velocity[axis] *= -1;
 	};
 })();
-
-Ball.prototype.boostVelocity = function(axis, factor) {
-	this.velocity[axis] *= factor;
-};
 
 Ball.prototype.setPosition = function(x, y) {
 	this.position.x = x;
@@ -44,8 +53,8 @@ Ball.prototype.refreshPosition = function() {
 	var padelCoordinates = this.board.getPadel(this.velocity.x).getPosition();
 
 	var bounceX = (padelCoordinates.y[0] < newY && padelCoordinates.y[1] >= newY + this.size) /* the ball is in the Y range of the padel */ && (
-		(this.velocity.x < 0 && padelCoordinates.x[1] == newX) ||
-		(this.velocity.x > 0 && padelCoordinates.x[0] == newX + this.size));
+		(this.velocity.x < 0 && padelCoordinates.x[1] >= newX) ||
+		(this.velocity.x > 0 && padelCoordinates.x[0] <= newX + this.size));
 
 	var bounceY = (newY < 0 || newY + this.size > this.board.getHeight());
 
@@ -54,8 +63,13 @@ Ball.prototype.refreshPosition = function() {
 
 	if (newX <= 0 || newX + this.size >= this.board.getWidth()) {
 		this.board.score(newX <= 0 ? 0 : 1);
+		this.velocity['x'] = this.initialVelocity.x;
+		this.bounce('x', true);
 	} else {
-		if (bounceX) { this.bounce('x');}
+		if (bounceX) {
+			this.velocity['x'] *= 1.1;
+			this.bounce('x');
+		}
 		if (bounceY) { this.bounce('y');}
 	}
 };
