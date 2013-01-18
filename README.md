@@ -1,4 +1,5 @@
 Canvas PONG
+===========
 
 The good ol' Pong game implemented with HTML canvas
 
