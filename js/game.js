@@ -12,11 +12,11 @@ var speed = 50,
 
 var board = new Board(boardWidth, boardHeight);
 var ball = new Ball(ballSize, initialVelocityX, initialVelocityY, boardWidth/2, boardHeight/2);
-var padel1 = new Padel(padelSize, 50, boardHeight/2 - padelSize/2);
-var cpuPlayer = new CPUPlayer(padelSize, boardWidth - 60, boardHeight/2 - padelSize/2);
+var human = new HumanPlayer(padelSize, 50, boardHeight/2 - padelSize/2);
+var cpu = new CPUPlayer(padelSize, boardWidth - 60, boardHeight/2 - padelSize/2);
 
 board.setBall(ball);
-board.setPadels(padel1, cpuPlayer);
+board.setPadels(human, cpu);
 board.setScorePanel(new Score(boardWidth/2 - 100,100), new Score(boardWidth/2 + 60, 100));
 var boardElement = document.createElement('canvas');
 boardElement.id = 'board';
@@ -25,21 +25,6 @@ boardElement.height = boardHeight;
 
 var ctx = boardElement.getContext('2d');
 document.body.appendChild(boardElement);
-document.onkeypress = function(e) {
-	e = e || window.event;
-	var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
-	switch (charCode) {
-		case 119:
-			padel1.moveUp();
-			break;
-		case 115:
-			padel1.moveDown();
-			break;
-		case 32:
-			pause = !pause;
-			break;
-	}
-};
 
 (function refresh() {
 	if (!pause) {
@@ -57,7 +42,8 @@ document.onkeypress = function(e) {
 		setTimeout(refresh, 1000/speed);
 	} else {
 		ctx.font = "24pt Courier";
-		ctx.fillText("GAME OVER\n PLAYER " + (winner+1) + " WINS!", 200, 250);
+		ctx.fillText("GAME OVER", 300, 250);
+		ctx.fillText((winner === 0 ? human : cpu).name + " wins", 300, 300);
 	}
 })();
 

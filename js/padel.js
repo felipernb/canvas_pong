@@ -27,21 +27,47 @@ Padel.prototype.draw = function(ctx) {
 	ctx.fillRect(this.x, this.y, this.width, this.size);
 };
 
-function CPUPlayer(padelSize, x, y) {
-	var parent = new Padel(padelSize, x, y);
-	parent.updatePosition = function() {
-		var ball = this.board.getBall();
-		if (ball.position.y > this.y + this.size) {
-			this.moveDown();
-		} else if(ball.position.y + ball.size < this.y) {
-			this.moveUp();
+function HumanPlayer(padelSize, x, y) {
+	var padel = new Padel(padelSize, x, y);
+	document.onkeypress = function(e) {
+		e = e || window.event;
+		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+		switch (charCode) {
+			case 119:
+				padel.moveUp();
+				break;
+			case 115:
+				padel.moveDown();
+				break;
+			case 32:
+				pause = !pause;
+				break;
 		}
 	};
 
-	parent.draw = function(ctx) {
+	padel.name = 'PLAYER 1';
+	return padel;
+}
+
+function CPUPlayer(padelSize, x, y) {
+	var padel = new Padel(padelSize, x, y);
+	padel.updatePosition = function() {
+		var ball = this.board.getBall();
+		if (ball.position.y > this.y + 2*this.size/3) {
+			console.info('up');
+			this.moveDown();
+		} else if(ball.position.y + ball.size <= this.y + this.size/3) {
+			this.moveUp();
+			console.info('down');
+		}
+	};
+
+	padel.draw = function(ctx) {
 		this.updatePosition();
 		ctx.fillStyle = "rgb(255, 255, 255)";
 		ctx.fillRect(this.x, this.y, this.width, this.size);
 	};
-	return parent;
+
+	padel.name = 'CPU';
+	return padel;
 }
