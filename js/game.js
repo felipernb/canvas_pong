@@ -29,6 +29,11 @@ document.body.appendChild(boardElement);
 (function refresh() {
 	if (!pause) {
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.fillStyle = "rgba(255, 255, 255)";
+
+		for(var i = 0; i < boardHeight; i += boardHeight / 10) {
+			ctx.fillRect(boardWidth/2 - 1, i, 2, boardHeight/20);
+		}
 		board.draw(ctx);
 		pauseText = false;
 	} else {
