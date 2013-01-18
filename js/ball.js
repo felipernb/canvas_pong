@@ -31,10 +31,10 @@ Ball.prototype.bounce = (function() {
 	return function(axis, score) {
 		if (axis == 'y') {
 			beep.play();
-		} else if (!score) {
-			plop.play();
-		} else {
+		} else if (score) {
 			peeeeeep.play();
+		} else {
+			plop.play();
 		}
 
 		this.velocity[axis] *= -1;
