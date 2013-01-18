@@ -53,8 +53,8 @@ Ball.prototype.refreshPosition = function() {
 	var padelCoordinates = this.board.getPadel(this.velocity.x).getPosition();
 
 	var bounceX = (padelCoordinates.y[0] < newY && padelCoordinates.y[1] >= newY + this.size) /* the ball is in the Y range of the padel */ && (
-		(this.velocity.x < 0 && newX <= padelCoordinates.x[1] && newX > padelCoordinates.x[0]) /* the ball is at the X of the left padel */||
-		(this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && newX + this.size < padelCoordinates.x[1]) /* the ball is at the X of the right padel */); 
+		(this.velocity.x < 0 && newX <= padelCoordinates.x[1] && this.position.x >= padelCoordinates.x[0]) /* the ball is at the X of the left padel */||
+		(this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && this.position.x + this.size <= padelCoordinates.x[1]) /* the ball is at the X of the right padel */); 
 
 	var bounceY = (newY < 0 || newY + this.size > this.board.getHeight());
 
