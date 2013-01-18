@@ -17,6 +17,10 @@ Board.prototype.setBall = function(ball) {
 	ball.setBoard(this);
 };
 
+Board.prototype.getBall = function() {
+	return this.elements.ball;
+};
+
 Board.prototype.setPadels = function(padel0, padel1) {
 	this.elements.padel0 = padel0;
 	padel0.setBoard(this);

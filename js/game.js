@@ -13,10 +13,10 @@ var speed = 50,
 var board = new Board(boardWidth, boardHeight);
 var ball = new Ball(ballSize, initialVelocityX, initialVelocityY, boardWidth/2, boardHeight/2);
 var padel1 = new Padel(padelSize, 50, boardHeight/2 - padelSize/2);
-var padel2 = new Padel(padelSize, boardWidth - 60, boardHeight/2 - padelSize/2);
+var cpuPlayer = new CPUPlayer(padelSize, boardWidth - 60, boardHeight/2 - padelSize/2);
 
 board.setBall(ball);
-board.setPadels(padel1, padel2);
+board.setPadels(padel1, cpuPlayer);
 board.setScorePanel(new Score(boardWidth/2 - 100,100), new Score(boardWidth/2 + 60, 100));
 var boardElement = document.createElement('canvas');
 boardElement.id = 'board';
@@ -31,11 +31,9 @@ document.onkeypress = function(e) {
 	switch (charCode) {
 		case 119:
 			padel1.moveUp();
-			padel2.moveUp();
 			break;
 		case 115:
 			padel1.moveDown();
-			padel2.moveDown();
 			break;
 		case 32:
 			pause = !pause;

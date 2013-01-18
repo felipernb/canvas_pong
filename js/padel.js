@@ -26,3 +26,22 @@ Padel.prototype.draw = function(ctx) {
 	ctx.fillStyle = "rgb(255, 255, 255)";
 	ctx.fillRect(this.x, this.y, this.width, this.size);
 };
+
+function CPUPlayer(padelSize, x, y) {
+	var parent = new Padel(padelSize, x, y);
+	parent.updatePosition = function() {
+		var ball = this.board.getBall();
+		if (ball.position.y > this.y + this.size) {
+			this.moveDown();
+		} else if(ball.position.y + ball.size < this.y) {
+			this.moveUp();
+		}
+	};
+
+	parent.draw = function(ctx) {
+		this.updatePosition();
+		ctx.fillStyle = "rgb(255, 255, 255)";
+		ctx.fillRect(this.x, this.y, this.width, this.size);
+	};
+	return parent;
+}
