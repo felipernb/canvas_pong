@@ -51,14 +51,19 @@ Ball.prototype.refreshPosition = function() {
 	var newY = this.position.y + this.velocity.y;
 
 	var padelCoordinates = this.board.getPadel(this.velocity.x).getPosition();
-
-	var bounceX = (padelCoordinates.y[0] < newY && padelCoordinates.y[1] >= newY + this.size) /* the ball is in the Y range of the padel */ && (
-		(this.velocity.x < 0 && newX <= padelCoordinates.x[1] && this.position.x >= padelCoordinates.x[0]) /* the ball is at the X of the left padel */||
-		(this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && this.position.x + this.size <= padelCoordinates.x[1]) /* the ball is at the X of the right padel */); 
+	var ballInPadelYRange = padelCoordinates.y[0] <= newY && padelCoordinates.y[1] >= newY + this.size;  /* the ball is in the Y range of the padel */ 
+	var ballInLeftPadelXRange = this.velocity.x < 0 && newX <= padelCoordinates.x[1] && this.position.x >= padelCoordinates.x[0];
+	var ballInRightPadelXRange = this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && this.position.x + this.size <= padelCoordinates.x[1];
+	var bounceX = ballInPadelYRange && (ballInLeftPadelXRange || ballInRightPadelXRange);
 
 	var bounceY = (newY < 0 || newY + this.size > this.board.getHeight());
 
-	this.position.x = (newX < 0 ? 0 : (newX + this.size >= this.board.getWidth() ? this.board.getWidth() - this.size : newX));
+	if (bounceX) {
+		this.position.x = padelCoordinates.x[(ballInLeftPadelXRange ? 1:0)] - (ballInRightPadelXRange? this.size : 0);
+	} else {
+		this.position.x = (newX < 0 ? 0 : (newX + this.size >= this.board.getWidth() ? this.board.getWidth() - this.size : newX));
+	}
+
 	this.position.y = (newY < 0 ? 0 : (newY + this.size >= this.board.getHeight() ? this.board.getHeight() - this.size : newY));
 
 	if (newX <= 0 || newX + this.size >= this.board.getWidth()) {
