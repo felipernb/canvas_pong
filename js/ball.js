@@ -50,8 +50,9 @@ Ball.prototype.refreshPosition = function() {
 	var newX = this.position.x + this.velocity.x;
 	var newY = this.position.y + this.velocity.y;
 
-	var padelCoordinates = this.board.getPadel(this.velocity.x).getPosition();
-	var ballInPadelYRange = padelCoordinates.y[0] <= newY && padelCoordinates.y[1] >= newY + this.size;  /* the ball is in the Y range of the padel */ 
+	var padel = this.board.getPadel(this.velocity.x);
+	var padelCoordinates = padel.getPosition();
+	var ballInPadelYRange = padelCoordinates.y[0] <= Math.max(newY, 0) && padelCoordinates.y[1] >= Math.min(newY + this.size, this.board.getHeight());  /* the ball is in the Y range of the padel */ 
 	var ballInLeftPadelXRange = this.velocity.x < 0 && newX <= padelCoordinates.x[1] && this.position.x >= padelCoordinates.x[0];
 	var ballInRightPadelXRange = this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && this.position.x + this.size <= padelCoordinates.x[1];
 	var bounceX = ballInPadelYRange && (ballInLeftPadelXRange || ballInRightPadelXRange);
@@ -66,16 +67,25 @@ Ball.prototype.refreshPosition = function() {
 
 	this.position.y = (newY < 0 ? 0 : (newY + this.size >= this.board.getHeight() ? this.board.getHeight() - this.size : newY));
 
-	if (newX <= 0 || newX + this.size >= this.board.getWidth()) {
+	if ((newX <= 0 || newX + this.size >= this.board.getWidth()) && !bounceX) { // Score
 		this.board.score(newX <= 0 ? 0 : 1);
 		this.bounce('x', true);
 		this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * Math.abs(this.initialVelocity.x); //restore initial velocity modulus		
 	} else {
 		if (bounceX) {
-			this.velocity['x'] *= 1.1;
+			this.velocity.x *= 1.1;
 			this.bounce('x');
+			this.spin(padel.getDirection());
 		}
 		if (bounceY) { this.bounce('y');}
+	}
+};
+
+Ball.prototype.spin = function(direction) {
+	if (direction < 0) { // padel moving up, ball spins down
+		this.velocity.y += 1;
+	} else if (direction > 0) { // padel movind down, ball spins up
+		this.velocity.x -=1;
 	}
 };
 

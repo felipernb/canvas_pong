@@ -12,10 +12,16 @@ Padel.prototype.setBoard = function(board) {
 
 Padel.prototype.moveUp = function() {
 	this.y = Math.max(0, this.y - this.move);
+	this.direction = -1;
 };
 
 Padel.prototype.moveDown = function() {
 	this.y = Math.min(board.height - this.size, this.y + this.move);
+	this.direction = 1;
+};
+
+Padel.prototype.getDirection = function() {
+	return this.direction;
 };
 
 Padel.prototype.getPosition = function() {
@@ -51,14 +57,13 @@ function HumanPlayer(padelSize, x, y) {
 
 function CPUPlayer(padelSize, x, y) {
 	var padel = new Padel(padelSize, x, y);
+	var difficulty = 9.5/10;
 	padel.updatePosition = function() {
 		var ball = this.board.getBall();
-		if (ball.position.y > this.y + 2*this.size/3) {
-			console.info('up');
+		if (ball.position.y > this.y + difficulty * this.size) {
 			this.moveDown();
-		} else if(ball.position.y + ball.size <= this.y + this.size/3) {
+		} else if(ball.position.y + ball.size <= this.y + this.size * (1-difficulty)) {
 			this.moveUp();
-			console.info('down');
 		}
 	};
 
