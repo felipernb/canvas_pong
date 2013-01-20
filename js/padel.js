@@ -4,6 +4,7 @@ function Padel(size, x, y) {
 	this.y = y;
 	this.move = 20;
 	this.width = 10;
+	this.direction = 0;
 }
 
 Padel.prototype.setBoard = function(board) {
@@ -35,14 +36,16 @@ Padel.prototype.draw = function(ctx) {
 
 function HumanPlayer(padelSize, x, y) {
 	var padel = new Padel(padelSize, x, y);
-	document.onkeypress = function(e) {
+	document.onkeydown = function(e) {
 		e = e || window.event;
 		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
 		switch (charCode) {
-			case 119:
+			case 38:
+				e.preventDefault();
 				padel.moveUp();
 				break;
-			case 115:
+			case 40:
+				e.preventDefault();
 				padel.moveDown();
 				break;
 			case 32:
@@ -51,6 +54,16 @@ function HumanPlayer(padelSize, x, y) {
 		}
 	};
 
+	document.onkeyup = function(e) {
+		e = e || window.event;
+		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+		switch (charCode) {
+			case 38:
+			case 40:
+				padel.direction = 0;
+				break;
+		}
+	};
 	padel.name = 'PLAYER 1';
 	return padel;
 }
@@ -64,6 +77,8 @@ function CPUPlayer(padelSize, x, y) {
 			this.moveDown();
 		} else if(ball.position.y + ball.size <= this.y + this.size * (1-difficulty)) {
 			this.moveUp();
+		} else {
+			this.direction = 0;
 		}
 	};
 
