@@ -2,7 +2,7 @@ function Padel(size, x, y) {
 	this.size = size;
 	this.x = x;
 	this.y = y;
-	this.move = 20;
+	this.move = 4;
 	this.width = 10;
 	this.direction = 0;
 }
@@ -70,7 +70,7 @@ function HumanPlayer(padelSize, x, y) {
 
 function CPUPlayer(padelSize, x, y) {
 	var padel = new Padel(padelSize, x, y);
-	var difficulty = 9.5/10;
+	var difficulty = 9/10;
 	padel.updatePosition = function() {
 		var ball = this.board.getBall();
 		if (ball.position.y > this.y + difficulty * this.size) {

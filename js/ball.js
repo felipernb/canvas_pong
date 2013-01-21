@@ -1,4 +1,4 @@
-function Ball(size, velocityX, velocityY, positionX, positionY) {
+function Ball(size, velocityX, velocityY, positionX, positionY, maxVelocityX, maxVelocityY) {
 	this.size = size;
 	this.initialVelocity = {
 		x: velocityX,
@@ -12,6 +12,9 @@ function Ball(size, velocityX, velocityY, positionX, positionY) {
 		x: positionX,
 		y: positionY
 	};
+
+	this.maxVelocityX = maxVelocityX || 20;
+	this.maxVelocityY = maxVelocityY || 10;
 }
 
 Ball.prototype.setBoard = function(board) {
@@ -74,6 +77,7 @@ Ball.prototype.refreshPosition = function() {
 	} else {
 		if (bounceX) {
 			this.velocity.x *= 1.1;
+			this.velocity.x = (this.velocity.x > 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.x), this.maxVelocityX);
 			this.bounce('x');
 			this.spin(padel.getDirection());
 		}
@@ -82,11 +86,15 @@ Ball.prototype.refreshPosition = function() {
 };
 
 Ball.prototype.spin = function(direction) {
+	var spin = Math.round(Math.random() * 2); //a bit of randomness
 	if (direction < 0) { // padel moving up, ball spins down
-		this.velocity.y += 1;
+		this.velocity.y += spin;
 	} else if (direction > 0) { // padel movind down, ball spins up
-		this.velocity.x -=1;
+		this.velocity.y -= spin;
+	} else {
+		this.velocity.y += (Math.round(Math.random()) ? 1 : -1) * spin;
 	}
+	this.velocity.y = (this.velocity.y > 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.y), this.maxVelocityY);
 };
 
 Ball.prototype.draw = function(ctx) {
