@@ -1,52 +1,52 @@
-function Padel(size, x, y) {
+function Paddle(size, x, y) {
 	this.size = size;
 	this.x = x;
 	this.y = y;
 	this.move = 20;
-	this.width = 10;
+	this.width = 20;
 	this.direction = 0;
 }
 
-Padel.prototype.setBoard = function(board) {
+Paddle.prototype.setBoard = function(board) {
 	this.board = board;
 };
 
-Padel.prototype.moveUp = function() {
+Paddle.prototype.moveUp = function() {
 	this.y = Math.max(0, this.y - this.move);
 	this.direction = -1;
 };
 
-Padel.prototype.moveDown = function() {
+Paddle.prototype.moveDown = function() {
 	this.y = Math.min(board.height - this.size, this.y + this.move);
 	this.direction = 1;
 };
 
-Padel.prototype.getDirection = function() {
+Paddle.prototype.getDirection = function() {
 	return this.direction;
 };
 
-Padel.prototype.getPosition = function() {
+Paddle.prototype.getPosition = function() {
 	return { x: [this.x, this.x + this.width], y: [this.y, this.y + this.size]};
 };
 
-Padel.prototype.draw = function(ctx) {
+Paddle.prototype.draw = function(ctx) {
 	ctx.fillStyle = "rgb(255, 255, 255)";
 	ctx.fillRect(this.x, this.y, this.width, this.size);
 };
 
-function HumanPlayer(padelSize, x, y) {
-	var padel = new Padel(padelSize, x, y);
+function HumanPlayer(paddleSize, x, y) {
+	var paddle = new Paddle(paddleSize, x, y);
 	document.onkeydown = function(e) {
 		e = e || window.event;
 		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
 		switch (charCode) {
 			case 38:
 				e.preventDefault();
-				padel.moveUp();
+				paddle.moveUp();
 				break;
 			case 40:
 				e.preventDefault();
-				padel.moveDown();
+				paddle.moveDown();
 				break;
 			case 32:
 				pause = !pause;
@@ -60,18 +60,18 @@ function HumanPlayer(padelSize, x, y) {
 		switch (charCode) {
 			case 38:
 			case 40:
-				padel.direction = 0;
+				paddle.direction = 0;
 				break;
 		}
 	};
-	padel.name = 'PLAYER 1';
-	return padel;
+	paddle.name = 'PLAYER 1';
+	return paddle;
 }
 
-function CPUPlayer(padelSize, x, y) {
-	var padel = new Padel(padelSize, x, y);
+function CPUPlayer(paddleSize, x, y) {
+	var paddle = new Paddle(paddleSize, x, y);
 	var difficulty = 9/10;
-	padel.updatePosition = function() {
+	paddle.updatePosition = function() {
 		var ball = this.board.getBall();
 		if (ball.position.y > this.y + difficulty * this.size) {
 			this.moveDown();
@@ -81,13 +81,13 @@ function CPUPlayer(padelSize, x, y) {
 			this.direction = 0;
 		}
 	};
-	padel.move = 4;
-	padel.draw = function(ctx) {
+	paddle.move = 4;
+	paddle.draw = function(ctx) {
 		this.updatePosition();
 		ctx.fillStyle = "rgb(255, 255, 255)";
 		ctx.fillRect(this.x, this.y, this.width, this.size);
 	};
 
-	padel.name = 'CPU';
-	return padel;
+	paddle.name = 'CPU';
+	return paddle;
 }

@@ -21,12 +21,12 @@ Board.prototype.getBall = function() {
 	return this.elements.ball;
 };
 
-Board.prototype.setPadels = function(padel0, padel1) {
-	this.elements.padel0 = padel0;
-	padel0.setBoard(this);
+Board.prototype.setPaddles = function(paddle0, paddle1) {
+	this.elements.paddle0 = paddle0;
+	paddle0.setBoard(this);
 
-	this.elements.padel1 = padel1;
-	padel1.setBoard(this);
+	this.elements.paddle1 = paddle1;
+	paddle1.setBoard(this);
 };
 
 Board.prototype.setScorePanel = function(score0, score1) {
@@ -34,8 +34,8 @@ Board.prototype.setScorePanel = function(score0, score1) {
 	this.elements.score1 = score1;
 };
 
-Board.prototype.score = function(padel) {
-	var scorer = padel ^ 1;
+Board.prototype.score = function(paddle) {
+	var scorer = paddle ^ 1;
 	if (this.elements["score" + scorer].points == 9) {
 		this.gameOver(scorer);
 	} else {
@@ -52,8 +52,8 @@ Board.prototype.gameOver = function(scorer) {
  * direction < 0 means that the ball is going to the left
  * (negative velocity)
  */
-Board.prototype.getPadel = function(direction) {
-	return direction < 0 ? this.elements.padel0 : this.elements.padel1;
+Board.prototype.getPaddle = function(direction) {
+	return direction < 0 ? this.elements.paddle0 : this.elements.paddle1;
 };
 
 Board.prototype.draw = function(context) {
