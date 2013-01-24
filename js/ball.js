@@ -14,7 +14,7 @@ function Ball(size, velocityX, velocityY, positionX, positionY, maxVelocityX, ma
 	};
 
 	this.maxVelocityX = maxVelocityX || 20;
-	this.maxVelocityY = maxVelocityY || 10;
+	this.maxVelocityY = maxVelocityY || 4;
 }
 
 Ball.prototype.setBoard = function(board) {

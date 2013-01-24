@@ -2,7 +2,7 @@ function Padel(size, x, y) {
 	this.size = size;
 	this.x = x;
 	this.y = y;
-	this.move = 4;
+	this.move = 20;
 	this.width = 10;
 	this.direction = 0;
 }
@@ -81,7 +81,7 @@ function CPUPlayer(padelSize, x, y) {
 			this.direction = 0;
 		}
 	};
-
+	padel.move = 4;
 	padel.draw = function(ctx) {
 		this.updatePosition();
 		ctx.fillStyle = "rgb(255, 255, 255)";
