@@ -22,14 +22,14 @@ Ball.prototype.setBoard = function(board) {
 };
 
 Ball.prototype.bounce = (function() {
-	var beep = 'soundfx/ping_pong_8bit_beeep.ogg';
-	var plop = 'soundfx/ping_pong_8bit_plop.ogg';
-	var peeeeeep = 'soundfx/ping_pong_8bit_peeeeeep.ogg';
-	var sound = new Audio();
+	var beep = new Audio('soundfx/ping_pong_8bit_beeep.ogg');
+	var plop = new Audio('soundfx/ping_pong_8bit_plop.ogg');
+	var peeeeeep = new Audio('soundfx/ping_pong_8bit_peeeeeep.ogg');
+	var sound;
 
 	return function(axis, score) {
-		// Chrome requires you to reset the src to be able to replay a sound
-		sound.src = (score ? peeeeeep : (axis == 'y' ? beep : plop));
+		sound = (score ? peeeeeep : (axis == 'y' ? beep : plop));
+		sound.load(); // This needs to be removed as an optimization to avoid requests
 		sound.play();
 		this.velocity[axis] *= -1;
 	};
@@ -46,46 +46,45 @@ Ball.prototype.refreshPosition = function() {
 
 	var padel = this.board.getPadel(this.velocity.x);
 	var padelCoordinates = padel.getPosition();
-	var ballInPadelYRange = padelCoordinates.y[0] <= Math.max(newY, 0) && padelCoordinates.y[1] >= Math.min(newY + this.size, this.board.getHeight());  /* the ball is in the Y range of the padel */ 
-	var ballInLeftPadelXRange = this.velocity.x < 0 && newX <= padelCoordinates.x[1] && this.position.x >= padelCoordinates.x[0];
-	var ballInRightPadelXRange = this.velocity.x > 0 && newX + this.size >= padelCoordinates.x[0] && this.position.x + this.size <= padelCoordinates.x[1];
-	var bounceX = ballInPadelYRange && (ballInLeftPadelXRange || ballInRightPadelXRange);
 
-	var bounceY = (newY < 0 || newY + this.size > this.board.getHeight());
+	/* the ball is in the Y range of the padel */
+	var ballInPadelYRange = padelCoordinates.y[0] <= Math.max(newY, 0) &&
+		padelCoordinates.y[1] >= Math.min(newY + this.size, this.board.getHeight());
+
+	var ballInLeftPadelXRange = (this.velocity.x < 0 &&
+		newX <= padelCoordinates.x[1] &&
+		this.position.x >= padelCoordinates.x[0]);
+
+	var ballInRightPadelXRange = (this.velocity.x > 0 &&
+		newX + this.size >= padelCoordinates.x[0] &&
+		this.position.x + this.size <= padelCoordinates.x[1]);
+
+	var bounceX = ballInPadelYRange && (ballInLeftPadelXRange || ballInRightPadelXRange);
+	var bounceY = (newY <= 0 || newY + this.size > this.board.getHeight());
 
 	if (bounceX) {
 		this.position.x = padelCoordinates.x[(ballInLeftPadelXRange ? 1:0)] - (ballInRightPadelXRange? this.size : 0);
+		this.velocity.x = (this.velocity.x > 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.x) + 1, this.maxVelocityX);
+		this.bounce('x');
+		this.spin(padel.getDirection());
 	} else {
-		this.position.x = (newX < 0 ? 0 : (newX + this.size >= this.board.getWidth() ? this.board.getWidth() - this.size : newX));
-	}
-
-	this.position.y = (newY < 0 ? 0 : (newY + this.size >= this.board.getHeight() ? this.board.getHeight() - this.size : newY));
-
-	if ((newX <= 0 || newX + this.size >= this.board.getWidth()) && !bounceX) { // Score
-		this.board.score(newX <= 0 ? 0 : 1);
-		this.bounce('x', true);
-		this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * Math.abs(this.initialVelocity.x); //restore initial velocity modulus		
-	} else {
-		if (bounceX) {
-			this.velocity.x *= 1.1;
-			this.velocity.x = (this.velocity.x > 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.x), this.maxVelocityX);
-			this.bounce('x');
-			this.spin(padel.getDirection());
+		this.position.x = (newX <= 0 ? 0 : (newX + this.size >= this.board.getWidth() ? this.board.getWidth() - this.size : newX));
+		if (this.position.x <= 0 || this.position.x + this.size >= this.board.getWidth()) {
+			this.board.score(this.position.x <= 0 ? 0 : 1);
+			this.bounce('x', true);
+			this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * Math.abs(this.initialVelocity.x); //restore initial velocity modulus		
 		}
-		if (bounceY) { this.bounce('y');}
 	}
+
+	this.position.y = (newY <= 0 ? 0 : (newY + this.size >= this.board.getHeight() ? this.board.getHeight() - this.size : newY));
+	if (bounceY) { this.bounce('y'); }
 };
 
 Ball.prototype.spin = function(direction) {
-	var spin = Math.round(Math.random() * 2); //a bit of randomness
-	if (direction < 0) { // padel moving up, ball spins down
-		this.velocity.y += spin;
-	} else if (direction > 0) { // padel movind down, ball spins up
-		this.velocity.y -= spin;
-	} else {
-		this.velocity.y += (Math.round(Math.random()) ? 1 : -1) * spin;
-	}
-	this.velocity.y = (this.velocity.y > 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.y), this.maxVelocityY);
+	// If the padel is stoped, it doesn't add any spin.
+	// If it's moving up, spin down and vice-versa
+	var spin = (direction ? (direction < 0 ? 1 : -1) : 0);
+	this.velocity.y = (this.velocity.y >= 0 ? 1 : -1) * Math.min(Math.abs(this.velocity.y) + spin, this.maxVelocityY);
 };
 
 Ball.prototype.draw = function(ctx) {
