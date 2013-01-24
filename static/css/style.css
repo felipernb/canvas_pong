@@ -2,11 +2,11 @@ body {
 	background-color: #000;
 	margin:0;
 	text-align:center;
-	color: green;
+	color: #aaa;
 	font-family: Courier;
 }
 
 #board {
-	border: 2px solid green;
+	border: 2px solid #aaa;
 	margin: auto;
 }

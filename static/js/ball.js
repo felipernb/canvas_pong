@@ -22,24 +22,15 @@ Ball.prototype.setBoard = function(board) {
 };
 
 Ball.prototype.bounce = (function() {
-	var beep = document.createElement('audio');
-	beep.src = 'soundfx/ping_pong_8bit_beeep.ogg';
-
-	var plop = document.createElement('audio');
-	plop.src = 'soundfx/ping_pong_8bit_plop.ogg';
-
-	var peeeeeep = document.createElement('audio');
-	peeeeeep.src = 'soundfx/ping_pong_8bit_peeeeeep.ogg';
+	var beep = 'soundfx/ping_pong_8bit_beeep.ogg';
+	var plop = 'soundfx/ping_pong_8bit_plop.ogg';
+	var peeeeeep = 'soundfx/ping_pong_8bit_peeeeeep.ogg';
+	var sound = new Audio();
 
 	return function(axis, score) {
-		if (axis == 'y') {
-			beep.play();
-		} else if (score) {
-			peeeeeep.play();
-		} else {
-			plop.play();
-		}
-
+		// Chrome requires you to reset the src to be able to replay a sound
+		sound.src = (score ? peeeeeep : (axis == 'y' ? beep : plop));
+		sound.play();
 		this.velocity[axis] *= -1;
 	};
 })();

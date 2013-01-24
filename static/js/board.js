@@ -57,7 +57,16 @@ Board.prototype.getPadel = function(direction) {
 };
 
 Board.prototype.draw = function(context) {
-	for (var i in this.elements) {
+	context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+	context.fillStyle = "rgba(255, 255, 255, 0.5)";
+	var boardHeight = context.canvas.height;
+	var boardWidth = context.canvas.width;
+	var i;
+	for(i = 0; i < boardHeight; i += boardHeight / 30) {
+		context.fillRect(boardWidth/2 - 1, i, 2, boardHeight/40);
+	}
+
+	for (i in this.elements) {
 		if (this.elements[i].refreshPosition) this.elements[i].refreshPosition();
 		this.elements[i].draw(context);
 	}

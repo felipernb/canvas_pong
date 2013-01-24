@@ -26,12 +26,6 @@ function Game(player1, player2) {
 
 	(function refresh() {
 		if (!pause) {
-			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-			ctx.fillStyle = "rgba(255, 255, 255)";
-
-			for(var i = 0; i < boardHeight; i += boardHeight / 10) {
-				ctx.fillRect(boardWidth/2 - 1, i, 2, boardHeight/20);
-			}
 			board.draw(ctx);
 			pauseText = false;
 		} else {
@@ -46,7 +40,7 @@ function Game(player1, player2) {
 		} else {
 			ctx.font = "24pt Courier";
 			ctx.fillText("GAME OVER", 300, 250);
-			ctx.fillText((winner === 0 ? human : cpu).name + " wins", 300, 300);
+			ctx.fillText((winner === 0 ? p1 : p2).name + " wins", 300, 300);
 		}
 	})();
 }
