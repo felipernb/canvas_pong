@@ -1,10 +1,10 @@
 function Game(player1, player2) {
-	var speed = 50,
+	var speed = 60, //fps
 		boardWidth = 800,
 		boardHeight = 600,
 		ballSize = 10,
-		initialVelocityX = 5,
-		initialVelocityY = 2,
+		initialVelocityX = 5, // 5px/frame = 300px/sec
+		initialVelocityY = 2, // 2px/frame = 120px/sec
 		padelSize = 100,
 		pauseText = false;
 
