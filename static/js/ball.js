@@ -48,8 +48,8 @@ Ball.prototype.refreshPosition = function() {
 	var paddleCoordinates = paddle.getPosition();
 
 	/* the ball is in the Y range of the paddle */
-	var ballInPaddleYRange = paddleCoordinates.y[0] <= Math.max(newY, 0) &&
-		paddleCoordinates.y[1] >= Math.min(newY + this.size, this.board.getHeight());
+	var ballInPaddleYRange = paddleCoordinates.y[0] <= Math.max(newY + this.size, 0) &&
+		paddleCoordinates.y[1] >= Math.min(newY, this.board.getHeight());
 
 	var ballInLeftPaddleXRange = (this.velocity.x < 0 &&
 		newX <= paddleCoordinates.x[1] &&
