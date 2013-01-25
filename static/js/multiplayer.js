@@ -53,7 +53,7 @@ Multiplayer.prototype.onmessage = (function() {
 	};
 
 	var sync = function() {};
-	
+
 	var messageCallbacks = [
 		waitingPartner,
 		foundPartner,
