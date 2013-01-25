@@ -14,11 +14,13 @@ Paddle.prototype.setBoard = function(board) {
 Paddle.prototype.moveUp = function() {
 	this.y = Math.max(0, this.y - this.move);
 	this.direction = -1;
+	this.observer.notify(this.y, this.direction);
 };
 
 Paddle.prototype.moveDown = function() {
 	this.y = Math.min(board.height - this.size, this.y + this.move);
 	this.direction = 1;
+	this.observer.notify(this.y, this.direction);
 };
 
 Paddle.prototype.getDirection = function() {
@@ -34,8 +36,9 @@ Paddle.prototype.draw = function(ctx) {
 	ctx.fillRect(this.x, this.y, this.width, this.size);
 };
 
-function HumanPlayer(paddleSize, x, y) {
+function HumanPlayer(paddleSize, x, y, observer) {
 	var paddle = new Paddle(paddleSize, x, y);
+	paddle.observer = observer;
 	document.onkeydown = function(e) {
 		e = e || window.event;
 		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
@@ -68,9 +71,10 @@ function HumanPlayer(paddleSize, x, y) {
 	return paddle;
 }
 
-function CPUPlayer(paddleSize, x, y) {
+function CPUPlayer(paddleSize, x, y, observer) {
 	var paddle = new Paddle(paddleSize, x, y);
-	var difficulty = 9/10;
+	var difficulty = 10/10;
+	paddle.observer = observer;
 	paddle.updatePosition = function() {
 		var ball = this.board.getBall();
 		if (ball.position.y > this.y + difficulty * this.size) {
