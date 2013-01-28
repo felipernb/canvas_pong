@@ -1,4 +1,4 @@
-function Game(player1, player2, p1Observer, p2Observer) {
+function Game(player1, player2) {
 	var speed = 60, //fps
 		boardWidth = 800,
 		boardHeight = 600,
@@ -10,8 +10,8 @@ function Game(player1, player2, p1Observer, p2Observer) {
 
 	var board = new Board(boardWidth, boardHeight);
 	var ball = new Ball(ballSize, initialVelocityX, initialVelocityY, boardWidth/2, boardHeight/2);
-	var p1 = new player1(paddleSize, 40, boardHeight/2 - paddleSize/2, p1Observer);
-	var p2 = new player2(paddleSize, boardWidth - 60, boardHeight/2 - paddleSize/2, p2Observer);
+	var p1 = player1.init(paddleSize, 40, boardHeight/2 - paddleSize/2);
+	var p2 = player2.init(paddleSize, boardWidth - 60, boardHeight/2 - paddleSize/2);
 
 	board.setBall(ball);
 	board.setPaddles(p1, p2);

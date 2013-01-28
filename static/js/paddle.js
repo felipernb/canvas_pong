@@ -14,13 +14,11 @@ Paddle.prototype.setBoard = function(board) {
 Paddle.prototype.moveUp = function() {
 	this.y = Math.max(0, this.y - this.move);
 	this.direction = -1;
-	this.observer.notify(this.y, this.direction);
 };
 
 Paddle.prototype.moveDown = function() {
 	this.y = Math.min(board.height - this.size, this.y + this.move);
 	this.direction = 1;
-	this.observer.notify(this.y, this.direction);
 };
 
 Paddle.prototype.getDirection = function() {
@@ -36,9 +34,13 @@ Paddle.prototype.draw = function(ctx) {
 	ctx.fillRect(this.x, this.y, this.width, this.size);
 };
 
-function HumanPlayer(paddleSize, x, y, observer) {
+function HumanPlayer(observer) {
+	this.observer = observer;
+}
+
+HumanPlayer.prototype.init = function(paddleSize, x, y) {
 	var paddle = new Paddle(paddleSize, x, y);
-	paddle.observer = observer;
+	var that = this;
 	document.onkeydown = function(e) {
 		e = e || window.event;
 		var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
@@ -55,6 +57,9 @@ function HumanPlayer(paddleSize, x, y, observer) {
 				pause = !pause;
 				break;
 		}
+		if (that.observer) {
+			that.observer.notify(paddle.y, paddle.direction);
+		}
 	};
 
 	document.onkeyup = function(e) {
@@ -66,15 +71,20 @@ function HumanPlayer(paddleSize, x, y, observer) {
 				paddle.direction = 0;
 				break;
 		}
+		if (that.observer) {
+			that.observer.notify(paddle.y, paddle.direction);
+		}
 	};
-	paddle.name = 'PLAYER 1';
+	paddle.name = "PLAYER 1";
 	return paddle;
+};
+
+function CPUPlayer() {
 }
 
-function CPUPlayer(paddleSize, x, y, observer) {
+CPUPlayer.prototype.init = function(paddleSize, x, y) {
 	var paddle = new Paddle(paddleSize, x, y);
 	var difficulty = 10/10;
-	paddle.observer = observer;
 	paddle.updatePosition = function() {
 		var ball = this.board.getBall();
 		if (ball.position.y > this.y + difficulty * this.size) {
@@ -94,4 +104,20 @@ function CPUPlayer(paddleSize, x, y, observer) {
 
 	paddle.name = 'CPU';
 	return paddle;
+};
+
+function RemotePlayer() {
 }
+
+RemotePlayer.prototype.init = function(paddleSize, x, y) {
+	this.paddle = new Paddle(paddleSize, x, y);
+
+	this.paddle.updatePosition = function(y, direction) {
+		this.direction = direction;
+		this.y = y;
+	};
+
+	this.paddle.name = 'Player 2';
+	return this.paddle;
+};
+

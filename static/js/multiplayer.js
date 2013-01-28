@@ -21,27 +21,37 @@ Multiplayer.prototype.onopen = function(e) {
 	console.info('channel open');
 };
 
-Multiplayer.prototype.startGame = function() {
+Multiplayer.prototype.startGame = function(player) {
+	var that = this;
 	var obs = function(identifier) {
+		var previous = {};
 		return {
 			id: identifier,
 			notify: function(y, direction) {
-				console.info(identifier, y, direction);
+				if (y != previous.y || direction != previous.d) {
+					that.sendMsg('/move', 'id=' + this.id + '&y=' + y + '&d=' + direction);
+					previous.y = y;
+					previous.d = direction;
+				}
 			}
 		};
 	};
-	this.game = new Game(HumanPlayer, CPUPlayer, obs(1), obs(2));
+	this.remotePlayer = new RemotePlayer();
+	if (player === 0) {
+		this.game = new Game(new HumanPlayer(obs(this.id)), this.remotePlayer);
+	} else {
+		this.game = new Game(this.remotePlayer, new HumanPlayer(obs(this.id)));
+	}
 };
 
 Multiplayer.prototype.onmessage = (function() {
-	var that = this;
 	var waitingPartner = function() {
 		console.info("Waiting partner");
 	};
 
-	var foundPartner = function() {
-		console.info("Found partner");
-		m.startGame();
+	var foundPartner = function(data) {
+		console.info("Found partner, starting as player ", data.p);
+		m.startGame(data.p);
 	};
 
 	var partnerLeft = function() {
@@ -49,7 +59,7 @@ Multiplayer.prototype.onmessage = (function() {
 	};
 
 	var partnerMoved = function(data) {
-		console.info("Partner moved", data);
+		m.remotePlayer.paddle.updatePosition(data.y, data.d);
 	};
 
 	var sync = function() {};

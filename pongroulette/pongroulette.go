@@ -63,8 +63,8 @@ func rendezVous(w http.ResponseWriter, r *http.Request) {
 		opponent := waiting.Front()
 		opponentId, _ := opponent.Value.(string)
 		waiting.Remove(opponent)
-		channel.SendJSON(c, id, map[string]int{"t" : FOUND_PARTNER})
-		channel.SendJSON(c, opponentId, map[string]int{"t" : FOUND_PARTNER})
+		channel.SendJSON(c, opponentId, map[string]int{"t" : FOUND_PARTNER, "p": 0})
+		channel.SendJSON(c, id, map[string]int{"t" : FOUND_PARTNER, "p": 1})
 		pairs[opponentId] = id
 		pairs[id] = opponentId
 		c.Infof("Matching user %v with %v", id, opponentId)
@@ -94,9 +94,13 @@ func disconnect(w http.ResponseWriter, r *http.Request) {
 
 func move(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	id := r.FormValue("from")
+	id := r.FormValue("id")
 	y, _ := strconv.Atoi(r.FormValue("y"))
 	direction, _ := strconv.Atoi(r.FormValue("d"))
-	channel.SendJSON(c, pairs[id], map[string]int{"t": PARTNER_MOVED, "y": y, "d": direction})
+	c.Infof("Seding move msg from %v to %v", id, pairs[id])
+	err := channel.SendJSON(c, pairs[id], map[string]int{"t": PARTNER_MOVED, "y": y, "d": direction})
+	if err != nil {
+		c.Errorf("%v", err)
+	}
 }
 
