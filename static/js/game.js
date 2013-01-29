@@ -49,4 +49,4 @@ function Game(player1, player2) {
 var pause = false,
 	gameOver = false,
 	winner;
-
+var game = new Game(new HumanPlayer(), new CPUPlayer());

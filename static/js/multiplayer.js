@@ -101,4 +101,4 @@ Multiplayer.prototype.sendMsg = function(uri, payload, callback) {
 
 };
 
-var m = new Multiplayer();
+//var m = new Multiplayer();
