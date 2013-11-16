@@ -1,6 +1,5 @@
 function Game(player1, player2) {
-	var speed = 60, //fps
-		boardWidth = 800,
+	var boardWidth = 800,
 		boardHeight = 600,
 		ballSize = 15,
 		initialVelocityX = 5, // 5px/frame = 300px/sec
@@ -26,6 +25,16 @@ function Game(player1, player2) {
 	this.ball = ball;
 	this.p1 = p1;
 	this.p2 = p2;
+	window.requestAnimFrame = (function(){
+		return window.requestAnimationFrame ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame	||
+			window.oRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			function(callback, element){
+				window.setTimeout(callback, 1000 / 60);
+			};
+	})();
 	(function refresh() {
 		if (!pause) {
 			board.draw(ctx);
@@ -38,7 +47,7 @@ function Game(player1, player2) {
 			}
 		}
 		if (!gameOver) {
-			setTimeout(refresh, 1000/speed);
+			requestAnimFrame(refresh);
 		} else {
 			ctx.font = "24pt Courier";
 			ctx.fillText("GAME OVER", 300, 250);
